@@ -9,6 +9,10 @@
   One self-contained HTML file · WebGL2 · MediaPipe · your photos never leave the machine.
 </p>
 
+<p align="center">
+  Made by <b>Aleksander Kutycki</b> · <a href="https://github.com/olekkut">GitHub</a> · <a href="https://www.linkedin.com/in/kutycki/">LinkedIn</a> · <a href="LICENSE">Apache-2.0</a>
+</p>
+
 ---
 
 Instead of a Gaussian blob or pixel blocks, each face is dragged sideways into horizontal colour bands that trail off the head in the direction the subject is looking. The trail breaks up into ragged, tapering fingers, the edge under the helmet brim stays razor sharp, and grain is matched to the photo so the smear doesn't look airbrushed.
@@ -17,12 +21,18 @@ Instead of a Gaussian blob or pixel blocks, each face is dragged sideways into h
 
 1. Download [`index.html`](index.html) (or clone the repo).
 2. Open it in Chrome, Edge or Firefox. Double-clicking the file works; there is no server or build step.
-3. Drop a photo, paste one with <kbd>Ctrl</kbd>+<kbd>V</kbd>, or click **Try the demo photo**. Every detected face gets a blur node.
+3. Drop a photo, paste one with <kbd>Ctrl</kbd>+<kbd>V</kbd>, or pick one of the four example photos. Every detected face gets a blur node.
 4. Fine-tune the nodes, then **Export** a full-resolution PNG or JPG.
 
-Add `?demo` to the URL to open straight into the demo photo, which is handy for a GitHub Pages link.
+Add `?demo` to the URL to open straight into the portrait, or `?demo=stairwell`, `?demo=search` or `?demo=group` for the other examples. That is handy for a GitHub Pages link.
 
-> **Requirements:** a browser with WebGL2. The first load needs internet access for Tailwind, the UI font and the MediaPipe models (jsDelivr, Google Fonts and Google Storage); after that they come from the browser cache. Image data is processed locally and is never uploaded.
+> **Requirements:** a browser with WebGL2. The first load needs internet access for Tailwind, the UI font and the MediaPipe models (jsDelivr, Google Fonts and Google Storage); after that they come from the browser cache. Your photos are processed locally and are never uploaded. The portrait example is built into `index.html`; the other three load from `docs/examples/`, or from Wikimedia Commons when the page is opened straight from disk.
+
+## Examples
+
+![Three example photos after auto-detect: a soldier on a stairwell, a soldier searching a role-player, and a group of 19 soldiers, every face smeared](docs/gallery.jpg)
+
+These are the examples bundled with the app, straight out of auto-detect with no manual edits.
 
 ## Screenshot
 
@@ -34,6 +44,8 @@ Add `?demo` to the URL to open straight into the demo photo, which is handy for 
 - **MediaPipe BlazeFace (full-range)** runs over a multi-scale tile pyramid, so small and distant faces are found, not just close-ups.
 - **Verification pass:** every candidate is re-framed at two crop sizes and re-scored by the short-range model, and its landmark geometry is sanity-checked. Badges, buttons and foliage that look face-like at one scale rarely survive both checks.
 - **Person-pose assist (BlazePose)** confirms heads that the face model barely sees behind NVGs, masks or profile angles.
+- **Camouflage check:** a "face" that sits on someone's arm, chest or leg and is much smaller than their head would have to be behind them, so it is camo, a patch or gear. Those hits are dropped using the person's pose and silhouette.
+- **Scarves and face paint:** when the face model only sees one eye, the app looks along the eye line for the other half and widens the node over both eyes.
 - **Facing direction and head tilt** from the keypoints set each streak's angle.
 - **Live confidence slider (0.15–0.95):** nodes appear and disappear as you drag it. Re-running detection never overwrites nodes you placed or edited.
 
@@ -71,6 +83,7 @@ Compositing order: `original + smudges → node smears → restore mask → grad
 ## Limitations
 
 - BlazeFace is trained on uncovered faces. Profiles behind an NVG monocular, gas masks and heavy face paint can be missed or misplaced; the vector node tool is the fix for those.
+- Faces looking down or partly hidden can score just under the default 0.55 threshold. Drag the confidence slider down and watch for new nodes.
 - On three-quarter views the automatic facing direction is a best guess. Press <kbd>X</kbd> to flip it.
 - The working resolution is capped at 40 MP and at the GPU's maximum texture size. Larger photos are downscaled, and the app says so.
 - Check every export at 100 % before publishing. No automatic tool replaces a human OPSEC review.
@@ -92,15 +105,34 @@ Compositing order: `original + smudges → node smears → restore mask → grad
 ## Repository layout
 
 ```
-index.html           the whole app (HTML + CSS + JS + GLSL, demo photo embedded)
+index.html           the whole app (HTML + CSS + JS + GLSL, portrait example embedded)
+LICENSE              Apache License 2.0
+NOTICE               copyright and attribution notice that copies must keep
 docs/hero.png        README banner, 1280×640 (also fits GitHub's social preview)
 docs/anatomy.png     annotated blur-node diagram
 docs/screenshot.png  editor screenshot
-docs/demo-face.jpg   public-domain demo portrait (same bytes as the copy inside index.html)
+docs/gallery.jpg     the bundled examples after auto-detect
+docs/demo-face.jpg   public-domain portrait (same bytes as the copy inside index.html)
+docs/examples/       the other three example photos, 1920 px on the long side
 ```
+
+## Author
+
+**Aleksander Kutycki** designed and built OPSEC//BLUR.
+
+- GitHub: [olekkut](https://github.com/olekkut)
+- LinkedIn: [kutycki](https://www.linkedin.com/in/kutycki/)
+
+## License
+
+Copyright 2026 Aleksander Kutycki. Licensed under the [Apache License, Version 2.0](LICENSE).
+
+You can use, change and share the code, including commercially. Copies and derivative works must keep the copyright notice, the license and the [NOTICE](NOTICE) file, and must say which files were changed. The license does not grant use of the author's name or the project name to endorse other products. The software comes with no warranty.
 
 ## Credits
 
-- **Demo photo:** Commodore Grace M. Hopper, USN, 20 January 1984. U.S. Navy photo by James S. Davis, Naval History and Heritage Command NH 96919-KN. Public domain.
+- **Portrait example:** Commodore Grace M. Hopper, USN, 20 January 1984. U.S. Navy photo by James S. Davis, Naval History and Heritage Command NH 96919-KN. Public domain.
+- **Stairwell and search examples:** Polish soldiers of the 15th Lubuskie Territorial Defence Brigade during Saber Junction 26, Hohenfels, Germany, 31 August 2026. U.S. Army photos by Sgt. Collin Mackall ([stairwell](https://commons.wikimedia.org/wiki/File:Saber_Junction_26_-_Day_5_(9900675).jpg), [search](https://commons.wikimedia.org/wiki/File:Saber_Junction_26_-_Day_5_(9900678).jpg)). Public domain.
+- **Group example:** Romanian Land Forces and U.S. Army soldiers after Polish-led radio training, Bemowo Piskie, Poland, August 2021. U.S. Army photo by Spc. Osvaldo Fuentes ([source](https://commons.wikimedia.org/wiki/File:Polish_Territorial_Defense_Forces_lead_multinational_communications_training_(6763629).jpg)). Public domain.
 - [MediaPipe Tasks Vision](https://github.com/google-ai-edge/mediapipe) (Apache-2.0), [Tailwind CSS](https://tailwindcss.com) (MIT) and [JetBrains Mono](https://www.jetbrains.com/lp/mono/) (OFL), all loaded from public CDNs.
 - The look is inspired by Spiritus Systems' photography. This project is not affiliated with or endorsed by Spiritus Systems.
