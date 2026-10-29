@@ -1,0 +1,8 @@
+# Reference photos used to tune the effect. They are Spiritus Systems' copyrighted work,
+# so they stay local and are not redistributed with the repo.
+how-it-should-look-like/
+
+# OS / editor clutter
+.DS_Store
+Thumbs.db
+desktop.ini
